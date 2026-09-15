@@ -721,15 +721,9 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
     private void AddEntitiesWithIdentityInsert<TEntity>(List<TEntity> entities, Action<List<TEntity>> addRange)
         where TEntity : class
     {
-        if (entities.Count == 0)
-        {
-            addRange(entities);
-            return;
-        }
-
         var configContext = _serviceProvider.GetRequiredService<ConfigContext>();
 
-        if (!configContext.Database.IsSqlServer())
+        if (!configContext.Database.IsSqlServer() || entities.Count == 0)
         {
             addRange(entities);
             return;
