@@ -375,7 +375,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation($"Importing Jurisdictions...");
         var jurisdictions = ImportData<Jurisdiction>(queries["Jurisdictions"], columnMappings["Jurisdictions"]);
-        _jurisdictionRepository.AddRange(jurisdictions);
+        AddEntitiesWithIdentityInsert(jurisdictions);
         _logger.LogInformation($"Jurisdictions Imported");
     }
 
@@ -388,7 +388,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation($"Importing Areas...");
         var areas = ImportData<Area>(queries["Areas"], columnMappings["Areas"]);
-        _areaRepository.AddRange(areas);
+        AddEntitiesWithIdentityInsert(areas);
         _logger.LogInformation($"Areas Imported");
     }
 
@@ -401,7 +401,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation($"Importing Regions...");
         var regions = ImportData<Region>(queries["Regions"], columnMappings["Regions"]);
-        _regionsRepository.AddRange(regions);
+        AddEntitiesWithIdentityInsert(regions);
         _logger.LogInformation($"Regions Imported");
     }
 
@@ -414,7 +414,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation($"Importing Routes");
         var routes = ImportData<Route>(queries["Routes"], columnMappings["Routes"]);
-        _routeRepository.AddRange(routes);
+        AddEntitiesWithIdentityInsert(routes);
         _logger.LogInformation($"Routes Imported");
     }
 
@@ -427,7 +427,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation($"Importing Route Locations");
         var routeLocations = ImportData<RouteLocation>(queries["RouteLocations"], columnMappings["RouteLocations"]);
-        _routeLocationsRepository.AddRange(routeLocations);
+        AddEntitiesWithIdentityInsert(routeLocations);
         _logger.LogInformation($"Route Locations Imported");
     }
 
@@ -441,7 +441,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation("Adding Device Configurations");
         var deviceConfigurations = ImportData<DeviceConfiguration>(queries["DeviceConfigurations"], columnMappings["DeviceConfigurations"]);
-        _deviceConfigurationRepository.AddRange(deviceConfigurations);
+        AddEntitiesWithIdentityInsert(deviceConfigurations);
         _logger.LogInformation("Device Configurations Added");
     }
 
@@ -454,7 +454,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation("Adding Products");
         var products = ImportData<Product>(queries["Products"], columnMappings["Products"]);
-        _productRepository.AddRange(products);
+        AddEntitiesWithIdentityInsert(products);
         _logger.LogInformation("Products Added");
     }
 
