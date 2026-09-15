@@ -375,7 +375,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation($"Importing Jurisdictions...");
         var jurisdictions = ImportData<Jurisdiction>(queries["Jurisdictions"], columnMappings["Jurisdictions"]);
-        AddEntitiesWithIdentityInsert(jurisdictions);
+        AddEntitiesWithIdentityInsert(jurisdictions, entities => _jurisdictionRepository.AddRange(entities));
         _logger.LogInformation($"Jurisdictions Imported");
     }
 
@@ -388,7 +388,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation($"Importing Areas...");
         var areas = ImportData<Area>(queries["Areas"], columnMappings["Areas"]);
-        AddEntitiesWithIdentityInsert(areas);
+        AddEntitiesWithIdentityInsert(areas, entities => _areaRepository.AddRange(entities));
         _logger.LogInformation($"Areas Imported");
     }
 
@@ -401,7 +401,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation($"Importing Regions...");
         var regions = ImportData<Region>(queries["Regions"], columnMappings["Regions"]);
-        AddEntitiesWithIdentityInsert(regions);
+        AddEntitiesWithIdentityInsert(regions, entities => _regionsRepository.AddRange(entities));
         _logger.LogInformation($"Regions Imported");
     }
 
@@ -414,7 +414,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation($"Importing Routes");
         var routes = ImportData<Route>(queries["Routes"], columnMappings["Routes"]);
-        AddEntitiesWithIdentityInsert(routes);
+        AddEntitiesWithIdentityInsert(routes, entities => _routeRepository.AddRange(entities));
         _logger.LogInformation($"Routes Imported");
     }
 
@@ -427,7 +427,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation($"Importing Route Locations");
         var routeLocations = ImportData<RouteLocation>(queries["RouteLocations"], columnMappings["RouteLocations"]);
-        AddEntitiesWithIdentityInsert(routeLocations);
+        AddEntitiesWithIdentityInsert(routeLocations, entities => _routeLocationsRepository.AddRange(entities));
         _logger.LogInformation($"Route Locations Imported");
     }
 
@@ -441,7 +441,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation("Adding Device Configurations");
         var deviceConfigurations = ImportData<DeviceConfiguration>(queries["DeviceConfigurations"], columnMappings["DeviceConfigurations"]);
-        AddEntitiesWithIdentityInsert(deviceConfigurations);
+        AddEntitiesWithIdentityInsert(deviceConfigurations, entities => _deviceConfigurationRepository.AddRange(entities));
         _logger.LogInformation("Device Configurations Added");
     }
 
@@ -454,7 +454,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
         _logger.LogInformation("Adding Products");
         var products = ImportData<Product>(queries["Products"], columnMappings["Products"]);
-        AddEntitiesWithIdentityInsert(products);
+        AddEntitiesWithIdentityInsert(products, entities => _productRepository.AddRange(entities));
         _logger.LogInformation("Products Added");
     }
 
@@ -481,7 +481,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
             {
                 _cancellationToken.ThrowIfCancellationRequested();
                 var batch = approaches.Skip(i * batchSize).Take(batchSize).ToList();
-                AddEntitiesWithIdentityInsert(batch);
+                AddEntitiesWithIdentityInsert(batch, entities => _approachRepository.AddRange(entities));
                 _logger.LogInformation($"Batch {i + 1}/{batches} imported ({batch.Count} approaches).");
             }
 
@@ -495,7 +495,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
             {
                 try
                 {
-                    AddEntitiesWithIdentityInsert(newApproaches);
+                    AddEntitiesWithIdentityInsert(newApproaches, entities => _approachRepository.AddRange(entities));
                     _logger.LogInformation("Imported {Count} new approaches", newApproaches.Count);
                 }
                 catch (Exception ex)
@@ -602,7 +602,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
                 _cancellationToken.ThrowIfCancellationRequested();
                 var batch = detectors.Skip(i).Take(batchSize).ToList();
                 WireDetectionTypesCore(batch, detectionTypes, detectionTypeDetectors, _cancellationToken);
-                AddEntitiesWithIdentityInsert(batch);
+                AddEntitiesWithIdentityInsert(batch, entities => _detectorRepository.AddRange(entities));
                 _logger.LogInformation($"Processed batch of {batch.Count} detectors");
             }
 
@@ -617,7 +617,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
                 try
                 {
                     WireDetectionTypesCore(newDetectors, detectionTypes, detectionTypeDetectors, _cancellationToken);
-                    AddEntitiesWithIdentityInsert(newDetectors);
+                    AddEntitiesWithIdentityInsert(newDetectors, entities => _detectorRepository.AddRange(entities));
                     _logger.LogInformation("Imported {Count} new detectors with detection-type mappings", newDetectors.Count);
                 }
                 catch (Exception ex)
@@ -689,7 +689,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         {
             try
             {
-                AddEntitiesWithIdentityInsert(locations);
+                AddEntitiesWithIdentityInsert(locations, entities => _locationRepository.AddRange(entities));
                 _logger.LogInformation($"Locations Imported");
             }
             catch (Exception ex)
@@ -706,7 +706,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
             {
                 try
                 {
-                    AddEntitiesWithIdentityInsert(newLocations);
+                    AddEntitiesWithIdentityInsert(newLocations, entities => _locationRepository.AddRange(entities));
                     _logger.LogInformation("Imported {Count} new locations", newLocations.Count);
                 }
                 catch (Exception ex)
@@ -718,11 +718,12 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         }
     }
 
-    private void AddEntitiesWithIdentityInsert<TEntity>(List<TEntity> entities)
+    private void AddEntitiesWithIdentityInsert<TEntity>(List<TEntity> entities, Action<List<TEntity>> addRange)
         where TEntity : class
     {
         if (entities.Count == 0)
         {
+            addRange(entities);
             return;
         }
 
@@ -730,8 +731,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
 
         if (!configContext.Database.IsSqlServer())
         {
-            configContext.Set<TEntity>().AddRange(entities);
-            configContext.SaveChanges();
+            addRange(entities);
             return;
         }
         // When SqlServer is used, we need to enable IDENTITY_INSERT for the table to allow inserting values into identity columns.
@@ -744,8 +744,7 @@ public class ConfigurationMigrationService : IConfigurationMigrationService
         try
         {
             configContext.Database.ExecuteSqlRaw(identityInsertOnSql);
-            configContext.Set<TEntity>().AddRange(entities);
-            configContext.SaveChanges();
+            addRange(entities);
         }
         finally
         {
