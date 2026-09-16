@@ -57,10 +57,16 @@ Or supply the required target contexts as environment variables:
 
 ```bash
 docker run --rm \
-  -e "ConnectionStrings__ConfigContext__Provider=PostgreSql" \
-  -e "ConnectionStrings__ConfigContext__ConnectionString=Host=db01;Database=atspm;Username=...;Password=..." \
-  -e "ConnectionStrings__EventLogContext__Provider=PostgreSql" \
-  -e "ConnectionStrings__EventLogContext__ConnectionString=Host=db01;Database=atspm;Username=...;Password=..." \
+  -e "DatabaseConfiguration__ConfigContext__DBType=PostgreSql" \
+  -e "DatabaseConfiguration__ConfigContext__Host=db01" \
+  -e "DatabaseConfiguration__ConfigContext__Database=atspm" \
+  -e "DatabaseConfiguration__ConfigContext__User=..." \
+  -e "DatabaseConfiguration__ConfigContext__Password=..." \
+  -e "DatabaseConfiguration__EventLogContext__DBType=PostgreSql" \
+  -e "DatabaseConfiguration__EventLogContext__Host=db01" \
+  -e "DatabaseConfiguration__EventLogContext__Database=atspm" \
+  -e "DatabaseConfiguration__EventLogContext__User=..." \
+  -e "DatabaseConfiguration__EventLogContext__Password=..." \
   ghcr.io/opensourcetransportation/atspm-43-to-5-data-migration:latest \
   transfer-events \
   --source "Server=sql01;Database=ATSPM43;User Id=...;Password=..." \
