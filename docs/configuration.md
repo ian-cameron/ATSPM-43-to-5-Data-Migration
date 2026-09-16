@@ -56,6 +56,20 @@ Example PostgreSQL configuration:
       "Database": "atspm",
       "User": "...",
       "Password": "..."
+    },
+    "AggregationContext": {
+      "DBType": "PostgreSql",
+      "Host": "db01",
+      "Database": "atspm",
+      "User": "...",
+      "Password": "..."
+    },
+    "IdentityContext": {
+      "DBType": "PostgreSql",
+      "Host": "db01",
+      "Database": "atspm",
+      "User": "...",
+      "Password": "..."
     }
   }
 }
@@ -78,6 +92,16 @@ $env:DatabaseConfiguration__EventLogContext__Host = "db01"
 $env:DatabaseConfiguration__EventLogContext__Database = "atspm"
 $env:DatabaseConfiguration__EventLogContext__User = "..."
 $env:DatabaseConfiguration__EventLogContext__Password = "..."
+$env:DatabaseConfiguration__AggregationContext__DBType = "PostgreSql"
+$env:DatabaseConfiguration__AggregationContext__Host = "db01"
+$env:DatabaseConfiguration__AggregationContext__Database = "atspm"
+$env:DatabaseConfiguration__AggregationContext__User = "..."
+$env:DatabaseConfiguration__AggregationContext__Password = "..."
+$env:DatabaseConfiguration__IdentityContext__DBType = "PostgreSql"
+$env:DatabaseConfiguration__IdentityContext__Host = "db01"
+$env:DatabaseConfiguration__IdentityContext__Database = "atspm"
+$env:DatabaseConfiguration__IdentityContext__User = "..."
+$env:DatabaseConfiguration__IdentityContext__Password = "..."
 ```
 
 The application loads the standard .NET host configuration sources, the local `appsettings.json`, optional user secrets, environment variables, and command-line values. Prefer an environment-specific secret store or environment variables for production credentials. The explicit command-line `--source`, `--start`, and `--end` values control the current run.

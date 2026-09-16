@@ -42,6 +42,20 @@ Configure all four contexts under `DatabaseConfiguration`. `ConfigContext` is us
     "Database": "atspm",
     "User": "...",
     "Password": "..."
+  },
+  "AggregationContext": {
+    "DBType": "PostgreSql",
+    "Host": "db01",
+    "Database": "atspm",
+    "User": "...",
+    "Password": "..."
+  },
+  "IdentityContext": {
+    "DBType": "PostgreSql",
+    "Host": "db01",
+    "Database": "atspm",
+    "User": "...",
+    "Password": "..."
   }
 }
 ```

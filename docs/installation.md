@@ -67,6 +67,16 @@ docker run --rm \
   -e "DatabaseConfiguration__EventLogContext__Database=atspm" \
   -e "DatabaseConfiguration__EventLogContext__User=..." \
   -e "DatabaseConfiguration__EventLogContext__Password=..." \
+  -e "DatabaseConfiguration__AggregationContext__DBType=PostgreSql" \
+  -e "DatabaseConfiguration__AggregationContext__Host=db01" \
+  -e "DatabaseConfiguration__AggregationContext__Database=atspm" \
+  -e "DatabaseConfiguration__AggregationContext__User=..." \
+  -e "DatabaseConfiguration__AggregationContext__Password=..." \
+  -e "DatabaseConfiguration__IdentityContext__DBType=PostgreSql" \
+  -e "DatabaseConfiguration__IdentityContext__Host=db01" \
+  -e "DatabaseConfiguration__IdentityContext__Database=atspm" \
+  -e "DatabaseConfiguration__IdentityContext__User=..." \
+  -e "DatabaseConfiguration__IdentityContext__Password=..." \
   ghcr.io/opensourcetransportation/atspm-43-to-5-data-migration:latest \
   transfer-events \
   --source "Server=sql01;Database=ATSPM43;User Id=...;Password=..." \
